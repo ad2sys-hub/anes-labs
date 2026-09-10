@@ -1,0 +1,21 @@
+{
+  "labId": "LAB-001",
+  "version": "0.1.0",
+  "title": "Continuity Chain",
+  "demoCapsule": "Continuity Chain Capsule",
+  "objective": "Observer comment le contexte, la provenance et l'état se dégradent au passage d'un outil à un autre.",
+  "status": "TESTABLE",
+  "demoCapsuleStatus": "TESTABLE",
+  "productionCapsuleStatus": "NOT_DEPLOYED",
+  "level": "Découverte",
+  "prerequisites": ["Node.js 20+ pour les tests", "Aucun compte, aucun secret, aucune donnée réelle"],
+  "runMode": ["local-node", "static-web"],
+  "expectedObservations": ["CLEAN_HANDOFF", "CONTEXT_LOSS", "PROVENANCE_CHANGE", "STATE_DRIFT", "AUTHORIZED_DELTA"],
+  "limitations": [
+    "Empreinte non cryptographique : pédagogique, pas une garantie d'intégrité.",
+    "Fixtures synthétiques : aucune donnée de production.",
+    "Ce Lab ne constitue pas une capsule de production ANES."
+  ],
+  "formationRoute": "/anes-formation-room/formation",
+  "relatedAnesModules": ["LUC-UTP", "Efficient Data Needed", "Agent Responsibility"]
+}

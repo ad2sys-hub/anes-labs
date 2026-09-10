@@ -1,0 +1,14 @@
+{
+  "base": {
+    "id": "step-1",
+    "parent": null,
+    "provenance": "lab-fixture",
+    "context": ["mission", "contraintes", "source"],
+    "state": { "etape": 1, "budget": 100 }
+  },
+  "chain": [
+    { "id": "step-1", "parent": null, "provenance": "lab-fixture", "context": ["mission", "contraintes", "source"], "state": { "etape": 1, "budget": 100 } },
+    { "id": "step-2", "parent": "step-1", "provenance": "lab-fixture", "context": ["mission", "contraintes", "source"], "state": { "etape": 2, "budget": 100 } },
+    { "id": "step-3", "parent": "step-2", "provenance": "lab-fixture", "context": ["mission"], "state": { "etape": 2, "budget": 100 } }
+  ]
+}
