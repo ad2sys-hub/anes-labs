@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LAB-SME — Démonstration : LUC-UTP, ANES & AREMS</title>
+<meta name="description" content="8 démonstrations pédagogiques jouables sur la confiance numérique. Données fictives, cadre défensif.">
+<style>
+:root{--bg:#070b1d;--card:#0f1530;--line:#26305a;--fg:#e8ecff;--mut:#9aa3c7;--cyan:#22d3ee;--gold:#f5b942;--ok:#34d399;--warn:#fbbf24;--bad:#f87171;--vio:#8b5cf6}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:radial-gradient(ellipse at top,#1a1048,var(--bg) 60%);color:var(--fg);min-height:100vh}
+header{max-width:1000px;margin:auto;padding:32px 20px 8px}h1{margin:.2em 0;font-size:clamp(1.5rem,4vw,2.4rem);background:linear-gradient(90deg,var(--cyan),var(--vio),var(--gold));-webkit-background-clip:text;color:transparent}
+.kick{color:var(--cyan);letter-spacing:.25em;font-size:.75rem}.note{border:1px solid #6b4e12;background:#2a1f07;color:#fde6a8;padding:10px 14px;border-radius:12px;font-size:.85rem;margin-top:12px}
+nav{max-width:1000px;margin:16px auto;padding:0 20px;display:flex;flex-wrap:wrap;gap:6px}nav button{background:var(--card);color:var(--mut);border:1px solid var(--line);padding:8px 12px;border-radius:999px;cursor:pointer;font-size:.8rem}nav button.on{color:var(--bg);background:var(--cyan);border-color:var(--cyan);font-weight:700}
+main{max-width:1000px;margin:auto;padding:0 20px 40px}section{display:none;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px}section.on{display:block}
+h2{margin:0 0 4px}.obj{color:var(--mut);margin:0 0 16px}.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.box{border:1px solid var(--line);border-radius:14px;padding:12px;background:#0a1026}.btn{background:transparent;border:1px solid var(--cyan);color:var(--cyan);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600}.btn:hover{background:#22d3ee22}.btn.gold{border-color:var(--gold);color:var(--gold)}
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.75rem;border:1px solid}.ok{color:var(--ok);border-color:var(--ok)}.warn{color:var(--warn);border-color:var(--warn)}.bad{color:var(--bad);border-color:var(--bad)}
+.verdict{margin-top:14px;padding:12px;border-radius:12px;border-left:4px solid var(--cyan);background:#0a1026}.lesson{margin-top:14px;font-size:.9rem;color:var(--mut)}.lesson b{color:var(--gold)}
+.log{font-family:ui-monospace,monospace;font-size:.8rem;max-height:200px;overflow:auto;white-space:pre-wrap}label{cursor:pointer}select,input[type=number]{background:#0a1026;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:4px 6px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left}.hl{background:#f8717122}
+footer{max-width:1000px;margin:auto;padding:20px;display:flex;justify-content:space-between;color:var(--mut);font-size:.8rem}footer b{color:var(--gold)}
+</style>
+</head>
+<body>
+<header>
+<div class="kick">ANES LABS · LAB-SME · v0.2.0</div>
+<h1>Démonstration : LUC-UTP, ANES &amp; AREMS</h1>
+<div style="color:var(--mut)">Édition spéciale SME — 13 &amp; 14 octobre 2026 · 8 démonstrations jouables</div>
+<div class="note">Simulation pédagogique. Données 100 % fictives, aucun système réel n'est contacté. Cadre défensif : aucune procédure de contournement. Production Capsule : NOT DEPLOYED.</div>
+</header>
+<nav id="nav"></nav>
+<main id="main"></main>
+<footer><span>Scénarios : <a style="color:var(--cyan)" href="https://github.com/ad2sys-hub/anes-labs/tree/main/labs/LAB-SME-confiance-numerique">dépôt GitHub</a></span><b>Produced by Chawblick Music</b></footer>
+<script>
+const $=(h)=>{const d=document.createElement('div');d.innerHTML=h.trim();return d.firstChild};
+const demos=[];
+function demo(id,title,obj,html,init,lesson){demos.push({id,title,obj,html,init,lesson})}
+
+/* SME-1 */
+demo("sme1","SME-1 · Décomposition d'un message","Un message n'est pas seulement son texte : en-tête, corps, promesse, provenance, chronologie, signature.",`
+<div class="row" style="margin-bottom:10px"><label><input type="radio" name="m1" value="s" checked> Message suspect</label><label><input type="radio" name="m1" value="l"> Message légitime</label></div>
+<div class="box" id="m1view"></div>
+<div class="row" style="margin-top:10px" id="m1layers"></div>
+<div class="verdict" id="m1v">Révélez les couches pour analyser le message.</div>`,root=>{
+const M={s:{from:"Service Artistes",addr:"support@artiste-validation-portal.example",auth:"conforme (pour ce domaine)",org:"ne correspond pas au domaine officiel du service",sent:"02:41",recv:"02:42",promise:"Urgence : compte suspendu sous 24 h",cta:"Valider mon compte",sig:"aucune signature vérifiable"},
+l:{from:"Service Artistes",addr:"notifications@service-artistes.example",auth:"conforme",org:"correspond au domaine officiel",sent:"10:02",recv:"10:02",promise:"Information : relevé trimestriel disponible",cta:"Voir dans mon espace (accès habituel)",sig:"signature du domaine valide"}};
+const L=[["addr","Adresse réelle"],["auth","Authentification du domaine"],["org","Cohérence domaine / organisation"],["time","Chronologie"],["promise","Promesse"],["sig","Signature"]];
+let shown=new Set();
+const lay=root.querySelector('#m1layers');L.forEach(([k,t])=>{const b=$(`<button class="btn">${t}</button>`);b.onclick=()=>{shown.add(k);b.disabled=true;b.style.opacity=.5;draw()};lay.appendChild(b)});
+const cur=()=>M[root.querySelector('input[name=m1]:checked').value];
+root.querySelectorAll('input[name=m1]').forEach(r=>r.onchange=()=>{shown.clear();lay.querySelectorAll('button').forEach(b=>{b.disabled=false;b.style.opacity=1});draw()});
+function draw(){const m=cur();const v=root.querySelector('#m1view');
+v.innerHTML=`<b>De :</b> ${m.from}${shown.has('addr')?` &lt;${m.addr}&gt;`:''}<br><b>Objet :</b> ${m.promise}<br><br>Bonjour Léa,<br>Merci de cliquer ci-dessous.<br><br><span class="tag ok">${m.cta}</span>`+
+(shown.has('auth')?`<br><br>Authentification : <span class="tag ${m===M.s?'warn':'ok'}">${m.auth}</span>`:'')+(shown.has('org')?`<br>Domaine : <span class="tag ${m===M.s?'bad':'ok'}">${m.org}</span>`:'')+
+(shown.has('time')?`<br>Envoyé ${m.sent} · reçu ${m.recv}`:'')+(shown.has('promise')?`<br>Promesse : <span class="tag ${m===M.s?'bad':'ok'}">${m===M.s?'urgence + menace':'informative'}</span>`:'')+(shown.has('sig')?`<br>Signature : <span class="tag ${m===M.s?'bad':'ok'}">${m.sig}</span>`:'');
+const vd=root.querySelector('#m1v');if(shown.size<L.length){vd.textContent=`${shown.size}/${L.length} couches révélées.`;return}
+vd.innerHTML=m===M.s?"<b>Incohérent.</b> Le domaine est techniquement « authentifié », mais il ne correspond pas à l'organisation, la promesse joue sur l'urgence et aucune signature ne relie le message au service. Vérifiez par un autre canal.":"<b>Cohérent.</b> Domaine, organisation, chronologie et signature concordent, et la promesse est informative."}draw()},
+"<b>Leçon :</b> une authentification de domaine prouve qui a envoyé depuis ce domaine, pas que le domaine représente l'organisation annoncée.");
+
+/* SME-2 */
+demo("sme2","SME-2 · Tracking et événements de consultation","Un simple affichage d'image peut créer un événement chez l'émetteur. Finalité et consentement font la différence.",`
+<div class="row"><label><input type="checkbox" id="t2block"> Bloquer les images distantes</label><label><input type="checkbox" id="t2proxy"> Proxy d'images du client</label><button class="btn" id="t2open">Ouvrir la newsletter</button><button class="btn gold" id="t2reset">Réinitialiser</button></div>
+<div class="grid" style="margin-top:12px"><div class="box"><b>Côté lecteur</b><div class="log" id="t2r"></div></div><div class="box"><b>Côté émetteur (simulé)</b><div class="log" id="t2e"></div></div></div>
+<div class="verdict" id="t2v">Ouvrez le message pour voir ce que l'émetteur enregistre.</div>`,root=>{
+let n=0,h=9;const r=root.querySelector('#t2r'),e=root.querySelector('#t2e'),v=root.querySelector('#t2v');
+root.querySelector('#t2open').onclick=()=>{n++;h+=Math.ceil(Math.random()*3);const t=`${String(h%24).padStart(2,'0')}:${String(10+n*7%50).padStart(2,'0')}`;const blk=root.querySelector('#t2block').checked,px=root.querySelector('#t2proxy').checked;
+r.textContent+=`${t} ouverture n°${n}${blk?' (images bloquées)':''}\n`;
+if(blk){e.textContent+=`${t} — aucun événement\n`;v.innerHTML="Images bloquées : l'émetteur ne reçoit pas d'événement de consultation."}
+else if(px){e.textContent+=`${t} — événement : ouverture (heure/appareil imprécis via proxy)\n`;v.innerHTML="Avec un proxy, l'événement existe mais devient imprécis : la mesure est approximative."}
+else{e.textContent+=`${t} — événement : ouverture n°${n}, appareil « mobile », réouverture=${n>1}\n`;v.innerHTML=n>1?"L'émetteur sait que le message a été rouvert : utile pour des statistiques, détournable pour confirmer qu'une adresse est active et relancer au bon moment.":"Usage légitime : mesurer l'audience agrégée. Question à poser : ai-je consenti à ce suivi ?"}};
+root.querySelector('#t2reset').onclick=()=>{n=0;h=9;r.textContent='';e.textContent='';v.textContent="Ouvrez le message pour voir ce que l'émetteur enregistre."}},
+"<b>Leçon :</b> le suivi n'est pas une faille en soi. Bloquer les images distantes et vérifier la politique de mesure de l'émetteur limitent le détournement.");
+
+/* SME-3 */
+demo("sme3","SME-3 · Identité déclarée vs provenance vérifiable","Classez chaque demande de virement de droits : déclarative, partiellement vérifiable ou documentée.",`
+<div class="grid" id="i3"></div><button class="btn" id="i3c" style="margin-top:12px">Vérifier mon classement</button><div class="verdict" id="i3v">Choisissez un niveau pour chaque demande.</div>`,root=>{
+const R=[{t:"E-mail « Directeur du label »",p:"Nom et logo dans la signature. Nouvelle adresse jamais vue. Pas de confirmation.",a:"d"},{t:"Messagerie instantanée",p:"Compte connu et authentifié, mais demande inhabituelle, aucun document signé.",a:"p"},{t:"Portail authentifié",p:"Compte authentifié, appareil connu, demande signée, confirmée par un second validateur.",a:"v"}];
+const g=root.querySelector('#i3');R.forEach((x,i)=>g.appendChild($(`<div class="box"><b>${x.t}</b><p style="color:var(--mut);font-size:.85rem">${x.p}</p><select id="i3s${i}"><option value="">— niveau —</option><option value="d">Déclarative</option><option value="p">Partiellement vérifiable</option><option value="v">Documentée</option></select></div>`)));
+root.querySelector('#i3c').onclick=()=>{let ok=0;R.forEach((x,i)=>{const s=root.querySelector('#i3s'+i);const good=s.value===x.a;ok+=good;s.style.borderColor=s.value?(good?'var(--ok)':'var(--bad)'):'var(--line)'});
+root.querySelector('#i3v').innerHTML=`${ok}/3 correct. `+(ok===3?"Bien vu : seul le portail combine authentification, appareil connu, signature et double validation.":"Rappel : une authentification prouve l'accès à un compte, pas la légitimité de la demande.")}},
+"<b>Leçon :</b> séparez toujours ce qui est affirmé de ce qui est prouvé, et confirmez hors bande les demandes sensibles.");
+
+/* SME-4 */
+demo("sme4","SME-4 · LUC-UTP","Une requête n'est acceptée que si la chaîne utilisateur → machine → signature → contexte → requête → autorisation est complète et cohérente.",`
+<p style="color:var(--mut);font-size:.85rem">Requête fictive : un agent demande l'export du catalogue d'œuvres.</p>
+<div class="grid" id="l4"></div><div class="row" style="margin-top:10px"><button class="btn" data-p="a">Scénario A · nominal</button><button class="btn" data-p="b">B · machine inconnue</button><button class="btn" data-p="c">C · autorisation expirée</button></div><div class="verdict" id="l4v"></div><div class="box log" id="l4log" style="margin-top:10px"></div>`,root=>{
+const K=[["user","Utilisateur identifié"],["machine","Machine connue"],["sig","Signature valide"],["ctx","Contexte cohérent"],["req","Requête dans le périmètre"],["authz","Autorisation en cours de validité"]];
+const st={};K.forEach(([k])=>st[k]=true);const g=root.querySelector('#l4');
+K.forEach(([k,t])=>{const el=$(`<label class="box"><input type="checkbox" checked data-k="${k}"> ${t}</label>`);el.querySelector('input').onchange=e=>{st[k]=e.target.checked;eval_()};g.appendChild(el)});
+const P={a:{},b:{machine:false},c:{authz:false}};root.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{K.forEach(([k])=>st[k]=P[b.dataset.p][k]!==false);g.querySelectorAll('input').forEach(i=>i.checked=st[i.dataset.k]);eval_()});
+const log=root.querySelector('#l4log');
+function eval_(){const miss=K.filter(([k])=>!st[k]).map(([,t])=>t);let d,c;
+if(!miss.length){d="ACCEPTÉE et journalisée";c="ok"}else if(!st.authz||!st.sig||!st.req){d="REJET MOTIVÉ";c="bad"}else{d="EN ATTENTE DE VÉRIFICATION";c="warn"}
+root.querySelector('#l4v').innerHTML=`Décision : <span class="tag ${c}">${d}</span>${miss.length?`<br>Lien(s) manquant(s) : ${miss.join(', ')}`:''}`;
+log.textContent=`[${new Date().toLocaleTimeString('fr-FR')}] export_catalogue → ${d}${miss.length?' · manque: '+miss.join(' | '):''}\n`+log.textContent}eval_()},
+"<b>Leçon :</b> la décision repose sur la cohérence de tous les liens, pas sur l'identité déclarée seule. LUC-UTP est présenté ici au stade concept / démonstration.");
+
+/* SME-5 */
+demo("sme5","SME-5 · AREMS","Contrôle et isolation de la donnée à l'entrée, pendant le traitement et à la sortie.",`
+<div class="row"><select id="a5f"><option value="0">relevé_streams_T3.csv (conforme)</option><option value="1">relevé_streams_T3_v2.csv (empreinte différente)</option><option value="2">export_inconnu.xlsx (origine non déclarée)</option></select><select id="a5d"><option value="ok">Destinataire : comptabilité (autorisé)</option><option value="no">Destinataire : adresse externe (non autorisé)</option></select><button class="btn" id="a5go">Faire passer le fichier</button></div>
+<div class="grid" style="margin-top:12px"><div class="box"><b>1. Entrée</b><div id="a5e" class="log"></div></div><div class="box"><b>2. Traitement isolé</b><div id="a5t" class="log"></div></div><div class="box"><b>3. Sortie</b><div id="a5s" class="log"></div></div></div><div class="verdict" id="a5v">Choisissez un fichier et un destinataire.</div>`,root=>{
+const q=s=>root.querySelector(s);q('#a5go').onclick=()=>{const f=+q('#a5f').value,d=q('#a5d').value;['#a5e','#a5t','#a5s'].forEach(s=>q(s).textContent='');
+const lot='LOT-'+(1000+Math.floor(Math.random()*9000));
+if(f===2){q('#a5e').innerHTML='Format : inattendu\nOrigine : non déclarée\n<span class="tag bad">QUARANTAINE</span>';q('#a5v').innerHTML="Le fichier n'entre pas dans la chaîne : il est isolé en quarantaine, sans contaminer le reste.";return}
+if(f===1){q('#a5e').innerHTML='Format : OK\nOrigine : déclarée\nEmpreinte : ≠ référence\n<span class="tag warn">QUARANTAINE · vérification</span>';q('#a5v').innerHTML="L'empreinte ne correspond pas au lot attendu : vérification demandée avant tout traitement.";return}
+q('#a5e').innerHTML=`Format : OK\nOrigine : déclarée\nEmpreinte : OK\n<span class="tag ok">ACCEPTÉ · ${lot}</span>`;q('#a5t').textContent=`${lot} → normalisation\n${lot} → agrégation par titre\n${lot} → calcul des parts\n(chaque étape journalisée)`;
+if(d==='no'){q('#a5s').innerHTML='<span class="tag bad">SORTIE BLOQUÉE</span>\nDestinataire non autorisé';q('#a5v').innerHTML="Le traitement est correct, mais la sortie est bloquée : le destinataire n'est pas autorisé."}
+else{q('#a5s').innerHTML=`<span class="tag ok">SORTIE AUTORISÉE</span>\nRéf. origine : ${lot}`;q('#a5v').innerHTML=`La sortie est reliée à son lot d'origine (${lot}) : on peut rejouer et auditer le traitement.`}}},
+"<b>Leçon :</b> l'isolation empêche une donnée suspecte de contaminer la chaîne, mais ne garantit pas que la donnée d'origine était juste.");
+
+/* SME-6 */
+demo("sme6","SME-6 · Reverse Mining","Partir d'un montant inattendu et remonter la chaîne d'exécution grâce aux journaux.",`
+<div class="row"><label><input type="checkbox" id="r6gap"> Simuler un maillon non journalisé</label><button class="btn" id="r6step">Remonter d'une étape</button><button class="btn gold" id="r6reset">Recommencer</button></div>
+<div class="box" style="margin-top:12px"><table id="r6t"></table></div><div class="verdict" id="r6v">Montant constaté pour « Nuit Roots » : <b>1 284,60 €</b> (attendu ≈ 642 €).</div>`,root=>{
+const S=[["Relevé final","1 284,60 € pour « Nuit Roots »","journal OK"],["Calcul de répartition","Somme de 2 lots identiques","journal OK"],["Lot de données","LOT-4471 présent deux fois","journal OK"],["Import","Import relancé à 03:12 après erreur réseau","journal OK"],["Source déclarée","Distributeur fictif « DistribX »","journal OK"]];
+let i=0;const t=root.querySelector('#r6t'),v=root.querySelector('#r6v');
+function draw(){const gap=root.querySelector('#r6gap').checked;t.innerHTML='<tr><th>Étape</th><th>Constat</th><th>Trace</th></tr>';
+for(let k=0;k<=i&&k<S.length;k++){if(gap&&k===3){t.innerHTML+=`<tr class="hl"><td>${S[k][0]}</td><td>?</td><td><span class="tag bad">aucun journal</span></td></tr>`;v.innerHTML="La reconstitution s'arrête : sans journal de l'import, on sait que le lot est doublé mais pas pourquoi. <b>Pas de trace, pas de preuve.</b>";return}
+t.innerHTML+=`<tr class="${k===2?'hl':''}"><td>${S[k][0]}</td><td>${S[k][1]}</td><td><span class="tag ok">${S[k][2]}</span></td></tr>`}
+v.innerHTML=i>=S.length-1?"Chaîne reconstituée : l'import relancé a doublé LOT-4471, d'où le montant doublé. Correction possible et documentée.":i>=2?"Écart localisé : le lot a été compté deux fois. Continuez pour en trouver la cause.":"Remontez la chaîne étape par étape."}
+root.querySelector('#r6step').onclick=()=>{if(i<S.length-1)i++;draw()};root.querySelector('#r6reset').onclick=()=>{i=0;draw()};root.querySelector('#r6gap').onchange=draw;draw()},
+"<b>Leçon :</b> Reverse Mining n'est pas une capacité absolue. La reconstitution n'est possible que là où des traces fiables et horodatées existent.");
+
+/* SME-7 */
+demo("sme7","SME-7 · Studio Vision 8","Séquencer, échantillonner et cartographier la timeline d'un workflow pour faire apparaître les ruptures.",`
+<div class="row"><button class="btn" id="v7seq">1. Séquencer</button><button class="btn" id="v7smp">2. Échantillonner</button><button class="btn" id="v7map">3. Cartographier</button></div>
+<div class="box" style="margin-top:12px"><table id="v7t"></table></div><div class="verdict" id="v7v">Liste brute des événements de la journée de sortie du single « Ombre Trap ».</div>`,root=>{
+const E=[["16:40","Premiers streams","Plateforme","—","—"],["09:05","Dépôt du single","Label","Léa M.","autorisé"],["17:55","Modification des crédits (métadonnées)","Distributeur","inconnu","aucune autorisation tracée"],["11:30","Validation des métadonnées","Distributeur","K. Diallo","autorisé"],["18:20","Réclamation d'un co-auteur","Gestion des droits","Sam R.","—"],["16:00","Publication","Plateforme","système","autorisé"]];
+let mode='raw';const t=root.querySelector('#v7t'),v=root.querySelector('#v7v');
+function draw(){let rows=[...E];if(mode!=='raw')rows.sort((a,b)=>a[0].localeCompare(b[0]));
+if(mode==='smp'){const b={};rows.forEach(r=>{const h=r[0].slice(0,2)+'h';b[h]=(b[h]||0)+1});t.innerHTML='<tr><th>Intervalle</th><th>Événements</th></tr>'+Object.entries(b).map(([h,n])=>`<tr class="${n>1?'hl':''}"><td>${h}</td><td>${'■ '.repeat(n)}${n}</td></tr>`).join('');v.innerHTML="Pics visibles entre 16 h et 18 h : la période autour de la publication concentre l'activité.";return}
+t.innerHTML='<tr><th>Heure</th><th>Événement</th>'+(mode==='map'?'<th>Système</th><th>Acteur</th><th>Autorisation</th>':'')+'</tr>'+rows.map(r=>{const bad=mode==='map'&&r[4].startsWith('aucune');return `<tr class="${bad?'hl':''}"><td>${r[0]}</td><td>${r[1]}</td>${mode==='map'?`<td>${r[2]}</td><td>${r[3]}</td><td>${bad?'<span class="tag bad">'+r[4]+'</span>':r[4]}</td>`:''}</tr>`}).join('');
+v.innerHTML=mode==='raw'?"Liste brute : difficile d'y voir une incohérence.":mode==='seq'?"Ordre réel rétabli : une modification de crédits intervient <b>après</b> la publication, juste avant une réclamation.":"Anomalie : crédits modifiés après publication par un acteur inconnu, sans autorisation tracée — et une réclamation suit 25 min plus tard."}
+root.querySelector('#v7seq').onclick=()=>{mode='seq';draw()};root.querySelector('#v7smp').onclick=()=>{mode='smp';draw()};root.querySelector('#v7map').onclick=()=>{mode='map';draw()};draw()},
+"<b>Leçon :</b> la chronologie rend visibles des ruptures invisibles dans une liste. Elle dépend de l'exhaustivité des événements et de la synchronisation des horloges.");
+
+/* SME-8 */
+demo("sme8","SME-8 · Artiste, droits et redistribution","Relier artiste → identité → œuvre → contribution → exploitation → revenus → redistribution, avec une preuve pour chaque montant.",`
+<div class="grid" id="d8"></div><div class="row" style="margin-top:10px">Streams : <input type="number" id="d8s" value="250000" min="0" step="10000"> × 0,003 € · Synchro : <input type="number" id="d8y" value="1200" min="0" step="100"> €<label><input type="checkbox" id="d8c"> Un contributeur non déclaré réclame une part</label></div>
+<div class="box" style="margin-top:12px"><table id="d8t"></table></div><div class="verdict" id="d8v"></div>`,root=>{
+const C=[{n:"Awa K.",r:"Auteure",p:40,sig:true},{n:"Malik T.",r:"Compositeur",p:35,sig:true},{n:"Nox Beats",r:"Beatmaker",p:25,sig:true}];
+const g=root.querySelector('#d8');C.forEach((c,i)=>{const el=$(`<div class="box"><b>${c.n}</b> · ${c.r}<br>Part : <input type="number" min="0" max="100" value="${c.p}" data-i="${i}"> % <label><input type="checkbox" checked data-s="${i}"> signée</label></div>`);el.querySelector('[data-i]').oninput=e=>{c.p=+e.target.value||0;draw()};el.querySelector('[data-s]').onchange=e=>{c.sig=e.target.checked;draw()};g.appendChild(el)});
+['#d8s','#d8y','#d8c'].forEach(s=>root.querySelector(s).addEventListener('input',draw));
+function draw(){const s=+root.querySelector('#d8s').value||0,y=+root.querySelector('#d8y').value||0,tot=s*0.003+y,sum=C.reduce((a,c)=>a+c.p,0),claim=root.querySelector('#d8c').checked;
+const t=root.querySelector('#d8t');t.innerHTML='<tr><th>Pour qui</th><th>Combien</th><th>Pourquoi / à partir de quoi</th><th>Preuve</th></tr>'+C.map(c=>`<tr class="${c.sig?'':'hl'}"><td>${c.n}</td><td>${sum===100?(tot*c.p/100).toFixed(2)+' €':'—'}</td><td>${c.p}% · streams + synchro « Ombre Trap »</td><td>${c.sig?'<span class="tag ok">part signée</span>':'<span class="tag bad">non signée</span>'}</td></tr>`).join('')+(claim?`<tr class="hl"><td>« J. Inconnu »</td><td>en attente</td><td>déclare avoir co-écrit le refrain</td><td><span class="tag warn">aucune déclaration signée</span></td></tr>`:'');
+const v=root.querySelector('#d8v');if(sum!==100){v.innerHTML=`Les parts totalisent ${sum} % : la répartition est bloquée tant qu'elle n'est pas égale à 100 %.`;return}
+const uns=C.filter(c=>!c.sig);v.innerHTML=`Total : <b>${tot.toFixed(2)} €</b> (streams ${(s*0.003).toFixed(2)} € + synchro ${y.toFixed(2)} €). `+(uns.length?`Part non signée pour ${uns.map(c=>c.n).join(', ')} : le versement peut être contesté. `:'Chaque montant est relié à une part signée et à un événement d’exploitation. ')+(claim?"La réclamation s'instruit sur pièces : la chaîne documentée montre ce qui a été déclaré et signé, et par qui.":"")}draw()},
+"<b>Leçon :</b> une attribution documentée rend la redistribution explicable et contestable sur des bases factuelles. Elle ne remplace ni les organismes de gestion collective ni un conseil juridique.");
+
+const nav=document.getElementById('nav'),main=document.getElementById('main');
+demos.forEach((d,i)=>{const b=document.createElement('button');b.textContent=d.title.split(' · ')[0];b.onclick=()=>show(i);nav.appendChild(b);
+const s=$(`<section id="${d.id}"><h2>${d.title}</h2><p class="obj">${d.obj}</p>${d.html}<p class="lesson">${d.lesson}</p></section>`);main.appendChild(s);d.init(s)});
+function show(i){[...nav.children].forEach((b,k)=>b.classList.toggle('on',k===i));[...main.children].forEach((s,k)=>s.classList.toggle('on',k===i));history.replaceState(null,'','#'+demos[i].id)}
+const h=location.hash.slice(1),idx=demos.findIndex(d=>d.id===h);show(idx<0?0:idx);
+</script>
+</body>
+</html>
