@@ -1,7 +1,7 @@
 # LAB SME — Scénarios des 8 démonstrations
 
 > Démonstration : LUC-UTP, ANES & AREMS — Édition spéciale SME, 13 & 14 octobre 2026.
-> Statut : **scénarios pédagogiques documentés**. Aucune démo exécutable publiée à ce stade. Production Capsule : NOT DEPLOYED.
+> Statut : **v0.2.0 — 8 démos jouables publiées** : https://ad2sys-hub.github.io/anes-labs/sme/ (simulation pédagogique). Production Capsule : NOT DEPLOYED.
 > Cadre : défensif, non opérationnel. Données 100 % fictives. Aucune procédure de contournement. Aucune plateforme réelle n'est désignée ni qualifiée de frauduleuse.
 
 Format commun : Objectif · Mise en situation (fictive) · Déroulé d'observation · Ce que l'on observe · Questions à poser · Limites.
