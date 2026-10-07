@@ -1,0 +1,14 @@
+{
+  "id": "LAB-SME",
+  "slug": "sme-confiance-numerique",
+  "title": "Démonstration : LUC-UTP, ANES & AREMS",
+  "version": "0.1.0",
+  "status": "BUILDING",
+  "demoCapsuleStatus": "BUILDING",
+  "productionCapsuleStatus": "NOT_DEPLOYED",
+  "event": "SME, 13 & 14 octobre 2026",
+  "demos": ["SME-1 Décomposition d'un message","SME-2 Tracking et événements de consultation","SME-3 Identité déclarée vs provenance vérifiable","SME-4 LUC-UTP","SME-5 AREMS","SME-6 Reverse Mining","SME-7 Studio Vision 8","SME-8 Artiste, droits et redistribution"],
+  "data": "fictitious",
+  "operational": false,
+  "license": "see repository LICENSE"
+}
