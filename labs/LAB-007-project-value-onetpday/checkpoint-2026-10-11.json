@@ -1,0 +1,28 @@
+{
+  "schema": "anes.lab.project-value.v1",
+  "lab_id": "LAB-007",
+  "title": "Project Value Timeline / OneTPDAY",
+  "status": "LAB_UNIT_DATA_MODEL_READY",
+  "start_date": "2026-10-11",
+  "source_project": "ANES Formation Room",
+  "source_checkpoint": "d17a6b2",
+  "baseline": {
+    "realized_value_score": 75.25,
+    "unit": "index_0_100_non_financial"
+  },
+  "curves": [
+    "P(t)",
+    "VR(t)",
+    "D(t)",
+    "IH(t)",
+    "E(t)",
+    "R(t)",
+    "B(t)",
+    "RR(t)"
+  ],
+  "oneTPDAY": {
+    "tp_per_day": 1,
+    "nominal_progress_per_validated_tp": 0.01,
+    "evidence_gate_required": true
+  }
+}
