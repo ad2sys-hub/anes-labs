@@ -21,6 +21,7 @@ Maturité : `CONCEPT → DEMO CAPSULE / LAB → REPOSITORY → TESTABLE PREVIEW 
 | LAB-004 | Provenance & EvidenceRefs | — | LAB UNIT |
 | LAB-005 | Integrity & Restore | — | LAB UNIT |
 | LAB-006 | State Replay | — | LAB UNIT |
+| LAB-007 | [Project Value Timeline / OneTPDAY](labs/LAB-007-project-value-onetpday) | Project Value Capsule | LAB UNIT — DATA MODEL READY |
 
 ## Démo publique
 
