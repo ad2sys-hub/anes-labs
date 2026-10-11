@@ -4,13 +4,14 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>LAB-001 — Continuity Chain Capsule | ANES Labs</title>
-<meta name="description" content="Demo Capsule LAB-001 : observez la perte de contexte, le changement de provenance et la derive d'etat lors d'un passage d'outil a outil." />
+<meta name="description" content="Demo Capsule LAB-001 : comprendre par un exemple concret comment une capture puis un réexport peuvent rompre la continuité de provenance." />
 <style>
-  :root { color-scheme: dark; --bg:#05070f; --card:#0c1120; --line:#1e2a44; --cyan:#3fe0ff; --amber:#ffb347; --green:#4ade80; --muted:#8ea0c0; }
+  :root { color-scheme: dark; --bg:#05070f; --card:#0c1120; --line:#1e2a44; --cyan:#3fe0ff; --violet:#a05cff; --amber:#ffb347; --green:#4ade80; --red:#ff5a69; --muted:#8ea0c0; }
   * { box-sizing: border-box; }
   body { margin:0; background:var(--bg); color:#e8eefc; font:16px/1.6 ui-sans-serif,system-ui,"Segoe UI",sans-serif; }
-  main { max-width: 960px; margin: 0 auto; padding: 48px 20px 80px; }
+  main { max-width: 1040px; margin: 0 auto; padding: 48px 20px 80px; }
   h1 { font-size: clamp(1.7rem,4vw,2.6rem); margin:.2em 0; letter-spacing:.02em; }
+  h2 { margin-top:0; }
   .kicker { color:var(--cyan); letter-spacing:.25em; font-size:.72rem; text-transform:uppercase; }
   .badges { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 28px; }
   .badge { border:1px solid var(--line); border-radius:8px; padding:4px 10px; font-size:.72rem; font-family:ui-monospace,monospace; color:var(--muted); }
@@ -25,22 +26,111 @@
   td, th { text-align:left; padding:8px; border-bottom:1px solid var(--line); vertical-align:top; }
   a { color:var(--cyan); }
   p.muted, ul.muted { color:var(--muted); }
+  .principle { font-size:clamp(1.2rem,3vw,1.7rem); font-weight:800; text-align:center; color:var(--cyan); padding:16px; border:1px solid rgba(63,224,255,.25); border-radius:14px; background:#070b16; }
+  .flow { display:grid; grid-template-columns:repeat(5,minmax(120px,1fr)); gap:10px; align-items:stretch; margin:18px 0; overflow-x:auto; padding-bottom:6px; }
+  .node { min-width:120px; border:1px solid var(--line); border-radius:14px; padding:14px; background:#070b16; transition:.35s ease; }
+  .node strong { display:block; color:var(--cyan); }
+  .node small { color:var(--muted); }
+  .node.lost { border-color:rgba(255,90,105,.75); box-shadow:0 0 18px rgba(255,90,105,.12); }
+  .node.good { border-color:rgba(74,222,128,.65); }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+  .chip { border:1px solid var(--line); border-radius:999px; padding:4px 9px; font-size:.74rem; color:var(--muted); }
+  .chip.lost { border-color:rgba(255,90,105,.55); color:var(--red); text-decoration:line-through; }
+  .chip.good { border-color:rgba(74,222,128,.45); color:var(--green); }
+  .stepbox { margin-top:14px; border-left:3px solid var(--violet); padding:12px 14px; background:#070b16; border-radius:0 12px 12px 0; }
+  .loop { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+  .loop span { padding:7px 10px; border:1px solid rgba(160,92,255,.45); border-radius:999px; color:#c7a7ff; font-size:.82rem; }
+  .quiz { border-top:1px solid var(--line); padding:14px 0; }
+  .answer { margin:10px 0 0; padding:12px; border-radius:10px; background:#070b16; color:var(--green); }
+  .speech { border-left:3px solid var(--amber); padding:12px 14px; color:#f3e5ce; background:#0b0d16; border-radius:0 12px 12px 0; }
+  @media (max-width:760px){ .flow{grid-template-columns:repeat(5,170px);} }
 </style>
 </head>
 <body>
 <main>
   <p class="kicker">ANES Labs · Demo Capsule = Lab Test Unit</p>
   <h1>LAB-001 — Continuity Chain Capsule</h1>
-  <p class="muted">Observer comment le contexte, la provenance et l'état se dégradent au passage d'un outil à un autre.</p>
+  <p class="muted">Observer comment le contexte, la provenance, l'identité et l'état se dégradent au passage d'un outil à un autre.</p>
   <div class="badges">
-    <span class="badge cyan">v0.1.0</span>
+    <span class="badge cyan">v0.2.0</span>
     <span class="badge ok">DEMO CAPSULE : TESTABLE</span>
     <span class="badge ok">5/5 tests</span>
     <span class="badge warn">PRODUCTION CAPSULE : NOT DEPLOYED</span>
   </div>
 
   <section>
-    <h2>Rejouer un scénario</h2>
+    <h2>Exemple concret : capture → réexport</h2>
+    <p>Une image peut rester visuellement presque identique tout en devenant un <strong>nouveau fichier</strong> qui ne transporte plus l'histoire du précédent.</p>
+    <p class="principle">Même image visible ≠ même objet numérique ≠ même provenance</p>
+
+    <div class="flow" id="storyFlow" aria-live="polite">
+      <div class="node good"><strong>Auteur photo</strong><small>PHOTO-AUTHOR-001</small></div>
+      <div class="node good"><strong>USER-1</strong><small>effectue la capture</small></div>
+      <div class="node good"><strong>OUTIL-A</strong><small>capture</small></div>
+      <div class="node good"><strong>Capture A</strong><small>HASH-A</small></div>
+      <div class="node" id="exportNode"><strong>Export B</strong><small>HASH-B · après OUTIL-B</small></div>
+    </div>
+
+    <div class="chips">
+      <span class="chip good" data-loss>Auteur déclaré</span>
+      <span class="chip good" data-loss>Capture USER-1</span>
+      <span class="chip good" data-loss>OUTIL-A</span>
+      <span class="chip good" data-loss>Timestamp T0</span>
+      <span class="chip good" data-loss>Parent HASH-A</span>
+      <span class="chip good" data-loss>Intention</span>
+      <span class="chip good" data-loss>EvidenceRef</span>
+    </div>
+
+    <div class="stepbox" id="storyText">Étape 1 : la capture A peut encore être reliée à son contexte déclaré.</div>
+    <div>
+      <button type="button" data-story="1">1 · Capture</button>
+      <button type="button" data-story="2">2 · Réexport</button>
+      <button type="button" data-story="3">3 · LUC-UTP</button>
+    </div>
+
+    <p class="muted">Le réexport peut être fait avec un autre outil ou avec le même outil : le problème est le <strong>lignage</strong>, pas seulement le changement d'application.</p>
+    <p><a href="https://github.com/ad2sys-hub/anes-labs/blob/main/labs/LAB-001-continuity-chain/docs/screenshot-provenance-walkthrough.md">Lire le walkthrough complet, les questions et le speech présentateur</a></p>
+  </section>
+
+  <section>
+    <h2>Boucle cognitive</h2>
+    <p class="muted">Pour éviter la surcharge et le relâchement d'attention, le Lab avance par micro-actions.</p>
+    <div class="loop">
+      <span>VOIR</span><span>HYPOTHÈSE</span><span>AGIR</span><span>OBSERVER</span><span>EXPLIQUER</span><span>VÉRIFIER</span><span>REJOUER</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Questions interactives</h2>
+    <div class="quiz">
+      <strong>Deux fichiers peuvent-ils montrer la même image avec des empreintes différentes ?</strong><br />
+      <button type="button" data-answer="a1">Voir la réponse</button>
+      <div class="answer" id="a1" hidden>Oui. Une nouvelle capture, un réencodage ou un réexport peut produire un nouvel objet binaire.</div>
+    </div>
+    <div class="quiz">
+      <strong>HASH-B permet-il de retrouver automatiquement l'auteur de la photo ?</strong><br />
+      <button type="button" data-answer="a2">Voir la réponse</button>
+      <div class="answer" id="a2" hidden>Non. Une empreinte n'est pas une preuve d'identité de l'auteur.</div>
+    </div>
+    <div class="quiz">
+      <strong>Le même outil utilisé deux fois garantit-il la continuité ?</strong><br />
+      <button type="button" data-answer="a3">Voir la réponse</button>
+      <div class="answer" id="a3" hidden>Non. Un nouvel export peut toujours créer un nouvel objet sans lien parent/enfant explicite.</div>
+    </div>
+    <div class="quiz">
+      <strong>Que doit faire le système si le parent manque ?</strong><br />
+      <button type="button" data-answer="a4">Voir la réponse</button>
+      <div class="answer" id="a4" hidden>Ne pas inventer la provenance. Il doit signaler une continuité non vérifiée ou appliquer REVIEW / QUARANTINE selon la politique.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Speech présentateur — 20 secondes</h2>
+    <p class="speech">« Une capture puis un réexport peuvent produire presque la même image, mais un fichier totalement neuf. Sans chaîne de provenance, on perd l'auteur, le capteur, l'outil et le parent. LUC-UTP sert à conserver cette continuité : qui, quoi, quand, avec quel outil, et à partir de quelle preuve. »</p>
+  </section>
+
+  <section>
+    <h2>Rejouer un scénario technique</h2>
     <div id="controls"></div>
     <pre id="out">Choisissez un scénario…</pre>
   </section>
@@ -56,6 +146,8 @@
     <ul class="muted">
       <li>Empreinte non cryptographique : pédagogique, pas une garantie d'intégrité.</li>
       <li>Fixtures synthétiques : aucune donnée réelle, aucun secret.</li>
+      <li>Un hash ne prouve pas à lui seul l'identité de l'auteur.</li>
+      <li>Les métadonnées peuvent être absentes, supprimées ou modifiées.</li>
       <li>Ce Lab n'est pas une capsule de production ANES.</li>
     </ul>
   </section>
@@ -93,9 +185,41 @@ for (const [k, v] of Object.entries(manifest)) {
   const th = document.createElement("th");
   th.textContent = k;
   const td = document.createElement("td");
-  td.textContent = Array.isArray(v) ? v.join(" · ") : String(v);
+  td.textContent = typeof v === "object" ? JSON.stringify(v) : String(v);
   tr.append(th, td);
   table.appendChild(tr);
+}
+
+const losses = [...document.querySelectorAll("[data-loss]")];
+const exportNode = document.getElementById("exportNode");
+const storyText = document.getElementById("storyText");
+for (const b of document.querySelectorAll("[data-story]")) {
+  b.addEventListener("click", () => {
+    const step = b.dataset.story;
+    if (step === "1") {
+      losses.forEach((c) => { c.classList.remove("lost"); c.classList.add("good"); });
+      exportNode.classList.remove("lost", "good");
+      storyText.textContent = "Étape 1 : la capture A peut encore être reliée à son contexte déclaré.";
+    } else if (step === "2") {
+      losses.forEach((c) => { c.classList.remove("good"); c.classList.add("lost"); });
+      exportNode.classList.add("lost");
+      exportNode.classList.remove("good");
+      storyText.textContent = "Étape 2 : l'export B est un nouvel objet. Sans parent/EvidenceRef, la chaîne amont devient invérifiable.";
+    } else {
+      losses.forEach((c) => { c.classList.remove("lost"); c.classList.add("good"); });
+      exportNode.classList.remove("lost");
+      exportNode.classList.add("good");
+      storyText.textContent = "Étape 3 : LUC-UTP conserve ou référence acteur, outil, temps, intention, parent hash et preuves au lieu d'inventer la provenance.";
+    }
+  });
+}
+
+for (const b of document.querySelectorAll("[data-answer]")) {
+  b.addEventListener("click", () => {
+    const el = document.getElementById(b.dataset.answer);
+    el.hidden = !el.hidden;
+    b.textContent = el.hidden ? "Voir la réponse" : "Masquer la réponse";
+  });
 }
 </script>
 </body>
