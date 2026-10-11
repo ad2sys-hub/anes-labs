@@ -1,21 +1,61 @@
 {
   "labId": "LAB-001",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "title": "Continuity Chain",
   "demoCapsule": "Continuity Chain Capsule",
-  "objective": "Observer comment le contexte, la provenance et l'état se dégradent au passage d'un outil à un autre.",
+  "objective": "Observer comment le contexte, la provenance, l'identité de l'acteur et l'état se dégradent au passage d'un outil à un autre, à partir d'un exemple concret de capture puis réexport.",
   "status": "TESTABLE",
   "demoCapsuleStatus": "TESTABLE",
   "productionCapsuleStatus": "NOT_DEPLOYED",
   "level": "Découverte",
-  "prerequisites": ["Node.js 20+ pour les tests", "Aucun compte, aucun secret, aucune donnée réelle"],
-  "runMode": ["local-node", "static-web"],
-  "expectedObservations": ["CLEAN_HANDOFF", "CONTEXT_LOSS", "PROVENANCE_CHANGE", "STATE_DRIFT", "AUTHORIZED_DELTA"],
+  "prerequisites": [
+    "Aucun compte, aucun secret, aucune donnée réelle",
+    "Navigateur moderne pour la démo",
+    "Node.js 20+ uniquement pour exécuter les tests"
+  ],
+  "runMode": [
+    "local-node",
+    "static-web"
+  ],
+  "expectedObservations": [
+    "CLEAN_HANDOFF",
+    "CONTEXT_LOSS",
+    "PROVENANCE_CHANGE",
+    "STATE_DRIFT",
+    "AUTHORIZED_DELTA",
+    "SAME_IMAGE_DIFFERENT_PROVENANCE"
+  ],
   "limitations": [
     "Empreinte non cryptographique : pédagogique, pas une garantie d'intégrité.",
     "Fixtures synthétiques : aucune donnée de production.",
+    "Un hash ne prouve pas à lui seul l'identité de l'auteur.",
+    "Les métadonnées peuvent être absentes, supprimées ou modifiées.",
     "Ce Lab ne constitue pas une capsule de production ANES."
   ],
   "formationRoute": "/anes-formation-room/formation",
-  "relatedAnesModules": ["LUC-UTP", "Efficient Data Needed", "Agent Responsibility"]
+  "relatedAnesModules": [
+    "LUC-UTP",
+    "Efficient Data Needed",
+    "Agent Responsibility"
+  ],
+  "guidedExamples": [
+    "SCREENSHOT_REEXPORT_PROVENANCE_BREAK",
+    "SAME_TOOL_NEW_FILE",
+    "PARENT_EVIDENCE_REF_CONTINUITY"
+  ],
+  "learningLoop": [
+    "VOIR",
+    "HYPOTHESE",
+    "AGIR",
+    "OBSERVER",
+    "EXPLIQUER",
+    "VERIFIER",
+    "REJOUER"
+  ],
+  "presenterMaterial": [
+    "docs/screenshot-provenance-walkthrough.md",
+    "speech-20s",
+    "speech-60s",
+    "interactive-q-and-a"
+  ]
 }
